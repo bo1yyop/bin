@@ -25,25 +25,26 @@ body {
 
 /* 네모 테두리 박스 */
 .box {
-  width: 450px;
-  height: 520px;
-  border: 5px solid #2e7d32;
+  width: 800px;
+  height: 800px;
+  top: -100px;
+  border: 7px solid #2e7d32;
   border-radius: 20px;
   background: #d9ffcc;
   position: relative;
   overflow: hidden;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 30px;
 }
 
 /* 개구리 */
 .frog {
-  font-size: 70px;
+  font-size: 100px;
   position: absolute;
-  bottom: 170px;
+  bottom: 110px;
   left: 50%;
   transform: translateX(-50%);
-  animation: jump 1.2s infinite;
+  animation: jump 1.0s infinite;
 }
 
 @keyframes jump {
@@ -55,13 +56,13 @@ body {
 
 /* 버튼 */
 button {
-  margin-top: 280px;
-  padding: 12px 20px;
+  margin-top: 80px;
+  padding: 20px 50px;
   border: none;
-  border-radius: 12px;
+  border-radius: 15px;
   background: #66bb6a;
   color: white;
-  font-size: 16px;
+  font-size: 47px;
   cursor: pointer;
 }
 
@@ -71,6 +72,8 @@ button:hover {
 
 h1 {
   font-family: 'MissedGyuwon';
+  font-size: 70px;
+  color: #018b08;
 }
 
 </style>
@@ -80,7 +83,7 @@ h1 {
 
 <div class="box">
 
-  <h2>하늘이의 웹코딩</h2>
+  <h1>하늘이의 웹코딩</h1>
 
   <div class="frog">🐸</div>
 
