@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>승빈이에게 보내는 편지</title>
+
+<style>
+:root {
+    --vh: 100vh;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    text-align: center;
+    background: #fff5f5;
+    overflow: hidden;
+    height: calc(var(--vh, 1vh) * 100);
+}
+
+/* 타이머 */
+#timer {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* 압박 멘트 */
+#alertText {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-weight: bold;
+    color: #ff3b3b;
+    display: none;
+}
+
+/* 봉투 */
+#envelope {
+    font-size: 100px;
+    cursor: pointer;
+    margin-top: 15vh;
+}
+
+#messageBox {
+    display: none;
+    margin-top: 40px;
+}
+
+#buttons {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+}
+
+/* 버튼 */
+.btn {
+    padding: 20px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background: #ff6b81;
+    color: white;
+    position: absolute;
+}
+
+/* 결과 */
+#result {
+    display: none;
+    font-size: 28px;
+    margin-top: 80px;
+}
+
+/* 다시하기 버튼 */
+#result {
+    display: none;
+    font-size: 28px;
+    margin-top: 80px;
+    text-align: center;
+}
+
+#resultArea {
+    display: none;
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#restartBtn {
+    margin-top: 15px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #333;
+    color: white;
+    cursor: pointer;
+}
+
+.heart {
+    position: fixed;
+    font-size: 24px;
+    animation: floatUp 3s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-400px) scale(1.8);
+        opacity: 0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="timer">10</div>
+<div id="alertText"></div>
+
+<div id="envelope">💌</div>
+<p>봉투를 눌러서 열어보세요</p>
+
+<div id="messageBox">
+    <p style="font-size: 30px;">이번 휴가 때 하늘이를 만날 의향이 있으십니까?</p>
+
+    <div id="buttons">
+        <button id="runaway" class="btn">네!!!!!</button>
+    </div>
+</div>
+
+<div id="result"></div>
+
+<div id="resultArea">
+    <button id="restartBtn">다시하기</button>
+</div>
+
+<script>
+function setVH() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setVH();
+window.addEventListener('resize', setVH);
+
+const envelope = document.getElementById("envelope");
+const messageBox = document.getElementById("messageBox");
+const runaway = document.getElementById("runaway");
+const result = document.getElementById("result");
+const timerEl = document.getElementById("timer");
+const alertText = document.getElementById("alertText");
+const restartBtn = document.getElementById("restartBtn");
+
+let time = 10;
+let gameStarted = false;
+let intervalMove;
+let intervalTimer;
+
+function moveButton() {
+    const padding = 30;
+
+    const btnWidth = runaway.offsetWidth;
+    const btnHeight = runaway.offsetHeight;
+
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
+
+    const maxX = vw - btnWidth - padding;
+    const maxY = vh - btnHeight - padding;
+
+    const x = Math.random() * maxX + padding;
+    const y = Math.random() * maxY + padding;
+
+    runaway.style.left = `${x}px`;
+    runaway.style.top = `${y}px`;
+}
+
+// 압박 멘트
+function showAlert(text) {
+    alertText.innerText = text;
+    alertText.style.display = "block";
+
+    setTimeout(() => {
+        alertText.style.display = "none";
+    }, 500);
+}
+
+// 타이머
+function startTimer() {
+    intervalTimer = setInterval(() => {
+        if (!gameStarted) return;
+
+        time--;
+        timerEl.innerText = time;
+
+        if (time === 5) showAlert("5초 남았습니다!");
+        if (time === 4) showAlert("4!");
+        if (time === 3) showAlert("3!!");
+        if (time === 2) showAlert("2!!!");
+        if (time === 1) showAlert("1!!!!");
+
+        if (time <= 0) {
+            clearInterval(intervalTimer);
+            endGame(false);
+        }
+    }, 1000);
+}
+
+// 종료
+function endGame(success) {
+    gameStarted = false;
+
+    clearInterval(intervalMove);
+    clearInterval(intervalTimer);
+
+    messageBox.style.display = "none";
+    result.style.display = "block";
+
+    // 성공시 멘트
+    if (success) {
+        result.innerHTML = "구래! 우리 재밋게 놀자<br>승빈아 사랑해 ❤️";
+
+        // 다시하기 숨김
+        document.getElementById("resultArea").style.display = "none";
+        // 하트 모션
+        heartExplosion(25);
+    } else {
+        // 실패시 멘트
+        result.innerText = "나랑 데이트...하고 싶지 않아..? 😭";
+        // 다시하기 보임
+        document.getElementById("resultArea").style.display = "flex";
+    }
+}
+
+//하트 폭발 모션
+function heartExplosion(count = 20) {
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            spawnHeart();
+        }, i * 150);
+    }
+}
+
+//하트 모션
+function spawnHeart() {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerText = "❤️";
+
+    // 랜덤 위치
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.top = window.innerHeight - 50 + "px";
+
+    document.body.appendChild(heart);
+
+    // 자동 제거
+    setTimeout(() => {
+        heart.remove();
+    }, 3000);
+}
+
+// 시작
+function startGame() {
+    envelope.style.display = "none";
+    messageBox.style.display = "block";
+
+    gameStarted = true;
+    time = 10;
+    timerEl.innerText = time;
+
+    clearInterval(intervalMove);
+    clearInterval(intervalTimer);
+
+    moveButton();
+
+    // 더 빠른 도망
+    intervalMove = setInterval(() => {
+        if (gameStarted) moveButton();
+    }, 250);
+
+    startTimer();
+}
+
+// 봉투 클릭
+envelope.addEventListener("click", startGame);
+
+// 성공
+runaway.addEventListener("click", () => {
+    endGame(true);
+});
+
+// 다시하기
+restartBtn.addEventListener("click", () => {
+    // 상태 초기화
+    gameStarted = false;
+
+    clearInterval(intervalMove);
+    clearInterval(intervalTimer);
+
+    // UI 초기화
+    result.style.display = "none";
+    // 다시하기 버튼 숨김
+    document.getElementById("resultArea").style.display = "none";
+    messageBox.style.display = "block";
+
+    // 타이머 리셋
+    time = 10;
+    timerEl.innerText = time;
+
+    // 게임 재시작
+    gameStarted = true;
+
+    moveButton();
+
+    intervalMove = setInterval(() => {
+        if (gameStarted) moveButton();
+    }, 250);
+
+    startTimer();
+});
+</script>
+<div id="heartContainer"></div>
+</body>
+</html>
