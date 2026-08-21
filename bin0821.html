@@ -278,9 +278,6 @@ const timerHeart = document.getElementById("timerHeart");
 const timerText = document.getElementById("timerText");
 
 
-const timerText = document.getElementById("timerText");
-
-
 
 // ==================================================
 // 이미지
@@ -404,7 +401,7 @@ function startGame() {
       
   gameStartTime = performance.now();
 
-  timerFill.style.height = "100%";
+  timerHeart.style.top = "0px";
   timerText.textContent = "20초";
 
 
