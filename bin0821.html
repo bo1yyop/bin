@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<title>하늘이의 사랑받기</title>
+
+<style>
+  :root {
+    --bg: #D1DEF4;
+    --frame: #4A5AA8;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+  }
+
+  #gameContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #gameBox {
+    width: 95%;
+    max-width: 700px;
+    height: 80vh;
+    border: 5px solid var(--frame);
+    border-radius: 18px;
+    background: #D1DEF4;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #startUI {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+  }
+
+  #loveBtn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 16px 28px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .ctrl-btn {
+    position: fixed;
+    bottom: 25px;
+
+    width: 72px;
+    height: 72px;
+
+    border-radius: 18px;
+    background: white;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+
+    font-size: 28px;
+    z-index: 20;
+  }
+
+  #btnLeft {
+    left: 16px;
+  }
+
+  #btnRight {
+    right: 16px;
+  }
+
+  @media (min-width: 700px) {
+    .ctrl-btn {
+      position: absolute;
+      bottom: 20px;
+    }
+
+    #btnLeft {
+      left: 20px;
+    }
+
+    #btnRight {
+      right: 20px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="gameContainer">
+
+  <div id="gameBox">
+
+    <canvas id="cv"></canvas>
+
+    <!-- 처음에 보이는 버튼 -->
+    <div id="startUI">
+      <button id="loveBtn">사랑받기!</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 방향키 -->
+<div id="btnLeft" class="ctrl-btn">◀</div>
+<div id="btnRight" class="ctrl-btn">▶</div>
+
+
+<script>
+
+// =========================
+// 기본 요소
+// =========================
+
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+
+const gameBox = document.getElementById("gameBox");
+
+const startUI = document.getElementById("startUI");
+const loveBtn = document.getElementById("loveBtn");
+
+const btnLeft = document.getElementById("btnLeft");
+const btnRight = document.getElementById("btnRight");
+
+
+// =========================
+// 캐릭터 이미지
+// =========================
+
+// ⭐ 여기에 네가 원하는 사진 파일 이름을 넣으면 됨
+const characterImg = new Image();
+characterImg.src = "images/haneul.png";
+
+
+// =========================
+// 게임 변수
+// =========================
+
+let W = 0;
+let H = 0;
+
+let running = false;
+
+let holdLeft = false;
+let holdRight = false;
+
+let character = {
+  x: 0,
+  y: 0,
+
+  size: 100,
+
+  speed: 5
+};
+
+
+// =========================
+// 화면 크기
+// =========================
+
+function resize() {
+
+  W = gameBox.clientWidth;
+  H = gameBox.clientHeight;
+
+  const dpr = window.devicePixelRatio || 1;
+
+  cv.width = W * dpr;
+  cv.height = H * dpr;
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+  character.y =
+    H - character.size - 30;
+
+  if (character.x > W - character.size) {
+    character.x =
+      W - character.size;
+  }
+}
+
+new ResizeObserver(resize).observe(gameBox);
+
+
+// =========================
+// 게임 시작
+// =========================
+
+function startGame() {
+
+  running = true;
+
+  // 사랑받기 버튼 제거
+  startUI.style.display = "none";
+
+  // 방향키 표시
+  btnLeft.style.display = "flex";
+  btnRight.style.display = "flex";
+
+  // 캐릭터 가운데
+  character.x =
+    W / 2 - character.size / 2;
+
+  character.y =
+    H - character.size - 30;
+
+  gameLoop();
+}
+
+
+// =========================
+// 게임 화면
+// =========================
+
+function gameLoop() {
+
+  if (!running) return;
+
+  // 배경 지우기
+  ctx.clearRect(0, 0, W, H);
+
+
+  // =====================
+  // 캐릭터 이동
+  // =====================
+
+  if (holdLeft) {
+
+    character.x -= character.speed;
+
+  }
+
+  if (holdRight) {
+
+    character.x += character.speed;
+
+  }
+
+
+  // 화면 밖으로 못 나가게
+  character.x =
+    Math.max(
+      0,
+      Math.min(
+        W - character.size,
+        character.x
+      )
+    );
+
+
+  // =====================
+  // 캐릭터 그리기
+  // =====================
+
+  if (characterImg.complete) {
+
+    ctx.drawImage(
+      characterImg,
+
+      character.x,
+      character.y,
+
+      character.size,
+      character.size
+    );
+
+  }
+
+
+  requestAnimationFrame(gameLoop);
+}
+
+
+// =========================
+// 왼쪽 버튼
+// =========================
+
+btnLeft.addEventListener(
+  "pointerdown",
+  () => {
+
+    holdLeft = true;
+
+  }
+);
+
+btnLeft.addEventListener(
+  "pointerup",
+  () => {
+
+    holdLeft = false;
+
+  }
+);
+
+btnLeft.addEventListener(
+  "pointercancel",
+  () => {
+
+    holdLeft = false;
+
+  }
+);
+
+btnLeft.addEventListener(
+  "pointerleave",
+  () => {
+
+    holdLeft = false;
+
+  }
+);
+
+
+// =========================
+// 오른쪽 버튼
+// =========================
+
+btnRight.addEventListener(
+  "pointerdown",
+  () => {
+
+    holdRight = true;
+
+  }
+);
+
+btnRight.addEventListener(
+  "pointerup",
+  () => {
+
+    holdRight = false;
+
+  }
+);
+
+btnRight.addEventListener(
+  "pointercancel",
+  () => {
+
+    holdRight = false;
+
+  }
+);
+
+btnRight.addEventListener(
+  "pointerleave",
+  () => {
+
+    holdRight = false;
+
+  }
+);
+
+
+// =========================
+// 키보드 방향키도 지원
+// =========================
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if (e.key === "ArrowLeft") {
+      holdLeft = true;
+    }
+
+    if (e.key === "ArrowRight") {
+      holdRight = true;
+    }
+
+  }
+);
+
+document.addEventListener(
+  "keyup",
+  e => {
+
+    if (e.key === "ArrowLeft") {
+      holdLeft = false;
+    }
+
+    if (e.key === "ArrowRight") {
+      holdRight = false;
+    }
+
+  }
+);
+
+
+// =========================
+// 사랑받기 버튼
+// =========================
+
+loveBtn.onclick = startGame;
+
+</script>
+
+</body>
+</html>
