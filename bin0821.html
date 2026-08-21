@@ -180,16 +180,18 @@
   position: absolute;
 
   left: 50%;
+  top: 0;
 
   width: 24px;
   height: 24px;
 
-  transform: translateX(-50%);
-
   object-fit: contain;
 
-  top: 0;
+  transform: translateX(-50%);
+
+  transition: none;
 }
+
 
 #timerText {
   position: absolute;
@@ -480,33 +482,36 @@ function gameLoop(time) {
   // 타이머
   // =========================
 
-const elapsed =
-  (time - gameStartTime) / 1000;
+const elapsed = (time - gameStartTime) / 1000;
 
-const remaining =
-  Math.max(0, GAME_TIME - elapsed);
+const remaining = Math.max(
+  0,
+  GAME_TIME - elapsed
+);
 
-const percent =
-  elapsed / GAME_TIME;
+const percent = Math.min(
+  1,
+  elapsed / GAME_TIME
+);
 
 
-// 하트가 위 → 아래로 이동
+// ❤️ 타이머 하트 이동
 const trackHeight = 180;
 const heartSize = 24;
 
-const maxTop =
-  trackHeight - heartSize;
+const maxTop = trackHeight - heartSize;
 
-timerHeart.style.top =
-  (percent * maxTop) + "px";
+const heartTop = percent * maxTop;
+
+timerHeart.style.top = heartTop + "px";
 
 
-// 남은 시간 표시
+// ⏱ 남은 시간
 timerText.textContent =
   Math.ceil(remaining) + "초";
 
 
-// 20초 종료
+// ⏰ 20초 종료
 if (remaining <= 0) {
 
   endGame();
