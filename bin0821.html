@@ -2,164 +2,138 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+>
 
 <title>하늘이의 사랑받기</title>
 
 <style>
-  :root {
-    --bg: #D1DEF4;
-    --frame: #4A5AA8;
-  }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg);
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-    touch-action: none;
-    user-select: none;
-  }
+:root {
+  --bg: #D1DEF4;
+  --frame: #4A5AA8;
+  --pink: #FF8FA8;
+  --pink-dark: #FF6F91;
+}
 
-  #gameContainer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  #gameBox {
-    width: 95%;
-    max-width: 700px;
-    height: 80vh;
-    border: 5px solid var(--frame);
-    border-radius: 18px;
-    background: #D1DEF4;
-    position: relative;
-    overflow: hidden;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
 
-  canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  width: 100%;
+  height: 100%;
 
-  /* 점수 */
-  #scoreBox {
-    position: absolute;
-    top: 12px;
-    left: 12px;
+  background: var(--bg);
 
-    background: white;
-    padding: 8px 14px;
+  font-family:
+    Arial,
+    "Noto Sans KR",
+    sans-serif;
 
-    border-radius: 12px;
+  overflow: hidden;
 
-    font-size: 18px;
-    font-weight: bold;
+  touch-action: none;
+  user-select: none;
+}
 
-    box-shadow: 0 5px 15px rgba(0,0,0,.12);
+#gameContainer {
+  width: 100%;
+  height: 100%;
 
-    z-index: 5;
-  }
+  display: flex;
 
-  /* 처음 나오는 사랑받기 버튼 */
-  #startUI {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+  justify-content: center;
+  align-items: center;
+}
 
-    transform: translate(-50%, -50%);
+#gameBox {
+  width: 95%;
+  max-width: 700px;
 
-    text-align: center;
-    z-index: 10;
-  }
+  height: 80vh;
+  min-height: 400px;
 
-  #loveBtn {
-    background: white;
+  border: 5px solid var(--frame);
+  border-radius: 18px;
 
-    border: 1px solid #ddd;
+  background: var(--bg);
 
-    padding: 16px 28px;
+  position: relative;
 
-    border-radius: 14px;
+  overflow: hidden;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, .12);
+}
 
-    font-size: 24px;
+canvas {
+  display: block;
 
-    cursor: pointer;
-  }
+  width: 100%;
+  height: 100%;
+}
 
-  /* 방향키 */
-  .ctrl-btn {
-    position: fixed;
 
-    bottom: 25px;
+/* ==================================================
+   점수
+================================================== */
 
-    width: 72px;
-    height: 72px;
+#scoreBox {
+  position: absolute;
 
-    border-radius: 18px;
+  top: 12px;
+  left: 12px;
 
-    background: white;
+  background: white;
 
-    display: none;
+  padding: 8px 14px;
 
-    justify-content: center;
-    align-items: center;
+  border-radius: 12px;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  font-size: 18px;
+  font-weight: bold;
 
-    font-size: 28px;
+  color: #4A5AA8;
 
-    z-index: 20;
-  }
+  box-shadow:
+    0 5px 15px rgba(0,0,0,.12);
 
-  #btnLeft {
-    left: 16px;
-  }
+  z-index: 5;
+}
 
-  #btnRight {
-    right: 16px;
-  }
 
-  @media (min-width: 700px) {
+/* ==================================================
+   타이머
+================================================== */
 
-    .ctrl-btn {
-      position: absolute;
-      bottom: 20px;
-    }
-
-    #btnLeft {
-      left: 20px;
-    }
-
-    #btnRight {
-      right: 20px;
-    }
-  }
-
- #timerBox {
+#timerBox {
   position: absolute;
 
   left: 12px;
   top: 65px;
 
-  width: 34px;
-  height: 180px;
+  width: 42px;
+  height: 210px;
 
   z-index: 5;
 }
 
+
+/* 타이머 바깥 */
+
 #timerTrack {
-  position: relative;
+  position: absolute;
+
+  left: 4px;
+  top: 24px;
 
   width: 30px;
   height: 180px;
@@ -176,44 +150,224 @@
   overflow: hidden;
 }
 
-#timerHeart {
+
+/* 실제로 줄어드는 게이지 */
+
+#timerFill {
   position: absolute;
 
-  left: 50%;
-  top: 0;
+  left: 0;
+  bottom: 0;
 
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
 
-  object-fit: contain;
+  background:
+    linear-gradient(
+      to top,
+      #FF6F91,
+      #FF9EB5
+    );
 
-  transform: translateX(-50%);
+  border-radius: 14px;
 
-  transition: none;
+  transition:
+    height .08s linear;
 }
 
+
+/* 타이머 숫자 */
 
 #timerText {
   position: absolute;
 
   left: 50%;
 
-  transform: translateX(-50%);
+  transform:
+    translateX(-50%);
 
-  top: -25px;
+  top: 0;
 
   white-space: nowrap;
 
   font-size: 14px;
+
   font-weight: bold;
 
   color: #4A5AA8;
 }
 
+
+/* ==================================================
+   시작 / 종료 화면
+================================================== */
+
+#startUI {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  text-align: center;
+
+  z-index: 10;
+
+  width: max-content;
+  max-width: 90%;
+}
+
+
+/* 시작 버튼 */
+
+#loveBtn,
+#retryBtn {
+  background: white;
+
+  border: 1px solid #ddd;
+
+  padding: 16px 28px;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.15);
+
+  font-size: 24px;
+
+  font-weight: bold;
+
+  color: #4A5AA8;
+
+  cursor: pointer;
+
+  transition:
+    transform .1s ease,
+    box-shadow .1s ease;
+}
+
+#loveBtn:active,
+#retryBtn:active {
+  transform: scale(.95);
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.12);
+}
+
+
+/* 종료 화면 */
+
+#gameOverTitle {
+  font-size: 30px;
+
+  font-weight: bold;
+
+  margin-bottom: 15px;
+
+  color: #4A5AA8;
+}
+
+#gameOverScore {
+  font-size: 20px;
+
+  margin-bottom: 18px;
+
+  color: #333;
+}
+
+
+/* ==================================================
+   좌우 버튼
+================================================== */
+
+.ctrl-btn {
+  position: fixed;
+
+  bottom: 25px;
+
+  width: 72px;
+  height: 72px;
+
+  border-radius: 18px;
+
+  background: white;
+
+  display: none;
+
+  justify-content: center;
+  align-items: center;
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.15);
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  color: #4A5AA8;
+
+  z-index: 20;
+
+  cursor: pointer;
+
+  touch-action: none;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+.ctrl-btn:active {
+  background: #f5f5f5;
+
+  transform: scale(.95);
+}
+
+
+/* PC */
+
+@media (min-width: 700px) {
+
+  .ctrl-btn {
+    position: absolute;
+
+    bottom: 20px;
+  }
+
+  #btnLeft {
+    left: 20px;
+  }
+
+  #btnRight {
+    right: 20px;
+  }
+}
+
+
+/* 작은 모바일 화면 */
+
+@media (max-height: 600px) {
+
+  #gameBox {
+    height: 90vh;
+  }
+
+  .ctrl-btn {
+    bottom: 12px;
+
+    width: 62px;
+    height: 62px;
+  }
+
+}
+
 </style>
 </head>
 
+
 <body>
+
 
 <div id="gameContainer">
 
@@ -221,82 +375,171 @@
 
     <canvas id="cv"></canvas>
 
-    <!-- 점수 -->
+
+    <!-- =========================
+         점수
+    ========================== -->
+
     <div id="scoreBox">
-      ❤️ 점수: <span id="score">0</span>
-    </div>
-<div id="timerBox">
-
-   <div id="timerTrack">
-      <img
-        id="timerHeart"
-        src="images/heart.png"
-        alt="timer"
-      >
+      ❤️ 점수:
+      <span id="score">0</span>
     </div>
 
-    <div id="timerText">
-      20초
-    </div>
-</div>
 
-    <!-- 시작 화면 -->
+    <!-- =========================
+         타이머
+    ========================== -->
+
+    <div id="timerBox">
+
+      <div id="timerText">
+        20초
+      </div>
+
+      <div id="timerTrack">
+
+        <div id="timerFill"></div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         시작 / 종료 UI
+    ========================== -->
+
     <div id="startUI">
+
       <button id="loveBtn">
         사랑받기!
       </button>
+
     </div>
 
   </div>
 
 </div>
 
-<!-- 방향키 -->
-<div id="btnLeft" class="ctrl-btn">◀</div>
-<div id="btnRight" class="ctrl-btn">▶</div>
+
+<!-- =========================
+     좌우 버튼
+========================== -->
+
+<div id="btnLeft" class="ctrl-btn">
+  ◀
+</div>
+
+<div id="btnRight" class="ctrl-btn">
+  ▶
+</div>
 
 
 <script>
 
-// ==================================================
-// 기본 요소
-// ==================================================
 
-const cv = document.getElementById("cv");
-const ctx = cv.getContext("2d");
+/* ==================================================
+   기본 요소
+================================================== */
 
-const gameBox = document.getElementById("gameBox");
+const cv =
+  document.getElementById("cv");
 
-const startUI = document.getElementById("startUI");
-const loveBtn = document.getElementById("loveBtn");
-
-const btnLeft = document.getElementById("btnLeft");
-const btnRight = document.getElementById("btnRight");
-
-const scoreEl = document.getElementById("score");
-
-const timerHeart = document.getElementById("timerHeart");
-
-const timerText = document.getElementById("timerText");
+const ctx =
+  cv.getContext("2d");
 
 
-
-// ==================================================
-// 이미지
-// ==================================================
-
-// ⭐ 캐릭터 이미지
-const characterImg = new Image();
-characterImg.src = "images/character.png";
-
-// ❤️ 하트 이미지
-const heartImg = new Image();
-heartImg.src = "images/heart.png";
+const gameBox =
+  document.getElementById("gameBox");
 
 
-// ==================================================
-// 게임 변수
-// ==================================================
+const startUI =
+  document.getElementById("startUI");
+
+
+const loveBtn =
+  document.getElementById("loveBtn");
+
+
+const btnLeft =
+  document.getElementById("btnLeft");
+
+
+const btnRight =
+  document.getElementById("btnRight");
+
+
+const scoreEl =
+  document.getElementById("score");
+
+
+const timerFill =
+  document.getElementById("timerFill");
+
+
+const timerText =
+  document.getElementById("timerText");
+
+
+
+/* ==================================================
+   이미지
+================================================== */
+
+const characterImg =
+  new Image();
+
+const heartImg =
+  new Image();
+
+
+characterImg.src =
+  "images/character.png";
+
+heartImg.src =
+  "images/heart.png";
+
+
+
+/* 이미지 로딩 오류 확인 */
+
+characterImg.onerror = function () {
+
+  console.error(
+    "❌ 캐릭터 이미지 로딩 실패:",
+    characterImg.src
+  );
+
+};
+
+
+heartImg.onerror = function () {
+
+  console.error(
+    "❌ 하트 이미지 로딩 실패:",
+    heartImg.src
+  );
+
+};
+
+
+
+/* 이미지가 실제로 로딩됐는지 확인 */
+
+function imageReady(img) {
+
+  return (
+    img.complete &&
+    img.naturalWidth > 0
+  );
+
+}
+
+
+
+/* ==================================================
+   게임 변수
+================================================== */
 
 let W = 0;
 let H = 0;
@@ -305,59 +548,89 @@ let running = false;
 
 let score = 0;
 
-let holdLeft = false;
-let holdRight = false;
-
-const GAME_TIME = 20;
 let gameStartTime = 0;
 
+let animationId = null;
 
-// ==================================================
-// 캐릭터
-// ==================================================
 
-let character = {
+/* ==================================================
+   게임 설정
+================================================== */
+
+const GAME_TIME = 20;
+
+
+/* 하트 생성 간격 */
+
+const heartSpawnInterval = 700;
+
+
+/* ==================================================
+   캐릭터
+================================================== */
+
+const character = {
+
   x: 0,
+
   y: 0,
 
   size: 100,
 
-  speed: 5
+  speed: 6
+
 };
 
 
-// ==================================================
-// 하트 목록
-// ==================================================
+
+/* ==================================================
+   하트
+================================================== */
 
 let hearts = [];
 
 
-// 하트가 떨어지는 속도
-const heartSpeed = 2.5;
+
+/* ==================================================
+   키 상태
+================================================== */
+
+let holdLeft = false;
+
+let holdRight = false;
 
 
-// 하트가 생기는 시간
-let lastHeartSpawn = 0;
 
-
-// 하트가 생성되는 간격
-const heartSpawnInterval = 900;
-
-
-// ==================================================
-// 화면 크기
-// ==================================================
+/* ==================================================
+   화면 크기
+================================================== */
 
 function resize() {
 
-  W = gameBox.clientWidth;
-  H = gameBox.clientHeight;
+  W =
+    gameBox.clientWidth;
 
-  const dpr = window.devicePixelRatio || 1;
+  H =
+    gameBox.clientHeight;
 
-  cv.width = W * dpr;
-  cv.height = H * dpr;
+
+  const dpr =
+    window.devicePixelRatio || 1;
+
+
+  cv.width =
+    W * dpr;
+
+  cv.height =
+    H * dpr;
+
+
+  cv.style.width =
+    W + "px";
+
+  cv.style.height =
+    H + "px";
+
 
   ctx.setTransform(
     dpr,
@@ -369,11 +642,20 @@ function resize() {
   );
 
 
+  /*
+   * 캐릭터를 바닥 쪽에 배치
+   */
+
   character.y =
-    H - character.size - 30;
+    H -
+    character.size -
+    30;
 
 
-  // 캐릭터가 화면 밖으로 나가지 않도록
+  /*
+   * 화면 밖으로 나가지 않게
+   */
+
   character.x =
     Math.max(
       0,
@@ -382,16 +664,52 @@ function resize() {
         character.x
       )
     );
+
 }
 
-new ResizeObserver(resize).observe(gameBox);
+
+/* 최초 실행 */
+
+resize();
 
 
-// ==================================================
-// 게임 시작
-// ==================================================
+/* 화면 크기 변경 */
+
+if (window.ResizeObserver) {
+
+  new ResizeObserver(resize)
+    .observe(gameBox);
+
+} else {
+
+  window.addEventListener(
+    "resize",
+    resize
+  );
+
+}
+
+
+
+/* ==================================================
+   게임 시작
+================================================== */
 
 function startGame() {
+
+  /*
+   * 이전 게임의 animationFrame이
+   * 혹시 남아있다면 취소
+   */
+
+  if (animationId !== null) {
+
+    cancelAnimationFrame(
+      animationId
+    );
+
+  }
+
 
   running = true;
 
@@ -399,162 +717,350 @@ function startGame() {
 
   hearts = [];
 
-  scoreEl.textContent = "0";
-      
-  gameStartTime = performance.now();
 
-  timerHeart.style.top = "0px";
-  timerText.textContent = "20초";
+  scoreEl.textContent =
+    "0";
 
 
-  // 시작 버튼 숨기기
-  startUI.style.display = "none";
+  /*
+   * 타이머 초기화
+   */
+
+  timerFill.style.height =
+    "100%";
+
+  timerText.textContent =
+    "20초";
 
 
-  // 방향키 보이기
-  btnLeft.style.display = "flex";
-  btnRight.style.display = "flex";
+  /*
+   * 시작 UI 숨기기
+   */
+
+  startUI.style.display =
+    "none";
 
 
-  // 캐릭터 가운데
+  /*
+   * 좌우 버튼 표시
+   */
+
+  btnLeft.style.display =
+    "flex";
+
+  btnRight.style.display =
+    "flex";
+
+
+  /*
+   * 캐릭터 중앙 배치
+   */
+
   character.x =
-    W / 2 - character.size / 2;
+    W / 2 -
+    character.size / 2;
 
 
   character.y =
-    H - character.size - 30;
+    H -
+    character.size -
+    30;
 
 
-  lastHeartSpawn = performance.now();
+  /*
+   * 버튼 상태 초기화
+   */
+
+  holdLeft = false;
+  holdRight = false;
 
 
-  requestAnimationFrame(gameLoop);
+  /*
+   * 시작 시간
+   */
+
+  gameStartTime =
+    performance.now();
+
+
+  /*
+   * 첫 하트가 너무 늦게 나오지 않게
+   */
+
+  lastHeartSpawn =
+    performance.now();
+
+
+  /*
+   * 게임 시작
+   */
+
+  animationId =
+    requestAnimationFrame(
+      gameLoop
+    );
+
 }
 
 
-// ==================================================
-// 하트 생성
-// ==================================================
+
+/* ==================================================
+   하트 생성
+================================================== */
 
 function spawnHeart() {
 
   const size = 42;
 
+
+  /*
+   * 화면 폭보다 하트가 커지는 경우 방지
+   */
+
+  const maxX =
+    Math.max(
+      0,
+      W - size
+    );
+
+
   hearts.push({
 
-    // 게임 박스 안에서 랜덤한 X 위치
-    x: Math.random() * (W - size),
+    x:
+      Math.random() *
+      maxX,
 
-    // 화면 위쪽에서 시작
-    y: -size,
+    y:
+      -size,
 
-    size: size,
+    size:
+      size,
 
-    speed: heartSpeed + Math.random() * 1.5
+    speed:
+      2.5 +
+      Math.random() * 2
+
   });
+
 }
 
 
-// ==================================================
-// 충돌 검사
-// ==================================================
+
+/* ==================================================
+   충돌 검사
+================================================== */
 
 function isColliding(a, b) {
 
   return !(
     a.x + a.size < b.x ||
-    a.x > b.x + b.size ||
-    a.y + a.size < b.y ||
-    a.y > b.y + b.size
+
+    a.x >
+      b.x + b.size ||
+
+    a.y + a.size <
+      b.y ||
+
+    a.y >
+      b.y + b.size
   );
+
 }
 
 
-// ==================================================
-// 게임 루프
-// ==================================================
+
+/* ==================================================
+   게임 루프
+================================================== */
+
+let lastHeartSpawn = 0;
+
 
 function gameLoop(time) {
 
-  if (!running) return;
+  /*
+   * 게임이 끝났다면 종료
+   */
 
-  // =========================
-  // 타이머
-  // =========================
+  if (!running) {
 
-const elapsed = (time - gameStartTime) / 1000;
+    return;
 
-const remaining = Math.max(
-  0,
-  GAME_TIME - elapsed
-);
-
-const percent = Math.min(
-  1,
-  elapsed / GAME_TIME
-);
+  }
 
 
-// ❤️ 타이머 하트 이동
-const trackHeight = 180;
-const heartSize = 24;
+  /* ==================================================
+     타이머
+  ================================================== */
 
-const maxTop = trackHeight - heartSize;
-
-const heartTop = percent * maxTop;
-
-timerHeart.style.top = heartTop + "px";
+  const elapsed =
+    (time - gameStartTime) /
+    1000;
 
 
-// ⏱ 남은 시간
-timerText.textContent =
-  Math.ceil(remaining) + "초";
+  const remaining =
+    Math.max(
+      0,
+      GAME_TIME - elapsed
+    );
 
 
-// ⏰ 20초 종료
-if (remaining <= 0) {
+  /*
+   * 0 ~ 1
+   *
+   * 0 = 시작
+   * 1 = 20초 종료
+   */
 
-  endGame();
-
-  return;
-}
-
-
-  // 배경 지우기
-  ctx.clearRect(0, 0, W, H);
+  const percent =
+    Math.min(
+      1,
+      elapsed / GAME_TIME
+    );
 
 
-  // ==================================================
-  // 하트 생성
-  // ==================================================
+  /*
+   * 타이머 게이지 감소
+   *
+   * 시작: 100%
+   * 종료: 0%
+   */
+
+  timerFill.style.height =
+    (
+      (1 - percent) * 100
+    ) + "%";
+
+
+  /*
+   * 숫자는 자연스럽게
+   *
+   * 20
+   * 19
+   * 18
+   * ...
+   * 1
+   * 0
+   */
+
+  timerText.textContent =
+    Math.ceil(remaining) +
+    "초";
+
+
+  /*
+   * 20초 종료
+   */
+
+  if (remaining <= 0) {
+
+    timerFill.style.height =
+      "0%";
+
+    timerText.textContent =
+      "0초";
+
+    endGame();
+
+    return;
+
+  }
+
+
+
+  /* ==================================================
+     캔버스 지우기
+  ================================================== */
+
+  ctx.clearRect(
+    0,
+    0,
+    W,
+    H
+  );
+
+
+
+  /* ==================================================
+     하트 생성
+  ================================================== */
 
   if (
-    time - lastHeartSpawn >=
+    time -
+    lastHeartSpawn >=
     heartSpawnInterval
   ) {
 
     spawnHeart();
 
-    lastHeartSpawn = time;
+    lastHeartSpawn =
+      time;
+
   }
 
 
-  // ==================================================
-  // 하트 이동
-  // ==================================================
 
-  for (let i = hearts.length - 1; i >= 0; i--) {
+  /* ==================================================
+     캐릭터 이동
+  ================================================== */
 
-    const heart = hearts[i];
+  if (holdLeft) {
+
+    character.x -=
+      character.speed;
+
+  }
 
 
-    // 아래로 이동
-    heart.y += heart.speed;
+  if (holdRight) {
+
+    character.x +=
+      character.speed;
+
+  }
 
 
-    // ==================================================
-    // 캐릭터와 충돌
-    // ==================================================
+  /*
+   * 화면 밖으로 못 나가게
+   */
+
+  character.x =
+    Math.max(
+      0,
+      Math.min(
+        W - character.size,
+        character.x
+      )
+    );
+
+
+
+  /* ==================================================
+     하트 이동 + 충돌
+  ================================================== */
+
+  for (
+    let i = hearts.length - 1;
+    i >= 0;
+    i--
+  ) {
+
+    const heart =
+      hearts[i];
+
+
+    /*
+     * 하트를 아래로 이동
+     */
+
+    heart.y +=
+      heart.speed;
+
+
+
+    /*
+     * 캐릭터와 충돌
+     */
 
     if (
       isColliding(
@@ -563,43 +1069,63 @@ if (remaining <= 0) {
       )
     ) {
 
-      // 하트 제거
-      hearts.splice(i, 1);
+      /*
+       * 하트 삭제
+       */
+
+      hearts.splice(
+        i,
+        1
+      );
 
 
-      // 점수 +1
+      /*
+       * 점수 +1
+       */
+
       score++;
 
       scoreEl.textContent =
         score;
 
+
       continue;
+
     }
 
 
-    // ==================================================
-    // 화면 아래로 나간 하트 제거
-    // ==================================================
+
+    /*
+     * 화면 아래로 나간 하트 삭제
+     */
 
     if (
       heart.y >
       H + heart.size
     ) {
 
-      hearts.splice(i, 1);
+      hearts.splice(
+        i,
+        1
+      );
 
-      continue;
     }
+
   }
 
 
-  // ==================================================
-  // 하트 그리기
-  // ==================================================
 
-  for (const heart of hearts) {
+  /* ==================================================
+     하트 그리기
+  ================================================== */
 
-    if (heartImg.complete) {
+  if (
+    imageReady(heartImg)
+  ) {
+
+    for (
+      const heart of hearts
+    ) {
 
       ctx.drawImage(
 
@@ -612,43 +1138,20 @@ if (remaining <= 0) {
         heart.size
 
       );
+
     }
+
   }
 
 
-  // ==================================================
-  // 캐릭터 이동
-  // ==================================================
 
-  if (holdLeft) {
+  /* ==================================================
+     캐릭터 그리기
+  ================================================== */
 
-    character.x -=
-      character.speed;
-  }
-
-  if (holdRight) {
-
-    character.x +=
-      character.speed;
-  }
-
-
-  // 화면 밖으로 못 나가게
-  character.x =
-    Math.max(
-      0,
-      Math.min(
-        W - character.size,
-        character.x
-      )
-    );
-
-
-  // ==================================================
-  // 캐릭터 그리기
-  // ==================================================
-
-  if (characterImg.complete) {
+  if (
+    imageReady(characterImg)
+  ) {
 
     ctx.drawImage(
 
@@ -661,112 +1164,242 @@ if (remaining <= 0) {
       character.size
 
     );
+
   }
 
 
-  // 다음 프레임
-  requestAnimationFrame(gameLoop);
+
+  /* ==================================================
+     다음 프레임
+  ================================================== */
+
+  animationId =
+    requestAnimationFrame(
+      gameLoop
+    );
+
 }
 
 
-// ==================================================
-// 왼쪽 버튼
-// ==================================================
 
-btnLeft.addEventListener(
-  "pointerdown",
-  () => {
+/* ==================================================
+   게임 종료
+================================================== */
 
-    holdLeft = true;
+function endGame() {
 
-  }
+  running = false;
+
+
+  /*
+   * 좌우 버튼 숨기기
+   */
+
+  btnLeft.style.display =
+    "none";
+
+  btnRight.style.display =
+    "none";
+
+
+  /*
+   * 키 상태 초기화
+   */
+
+  holdLeft = false;
+  holdRight = false;
+
+
+  /*
+   * 종료 화면
+   */
+
+  startUI.innerHTML = `
+
+    <div id="gameOverTitle">
+      사랑받기 완료! 💗
+    </div>
+
+    <div id="gameOverScore">
+      점수: ${score}점
+    </div>
+
+    <button id="retryBtn">
+      다시하기
+    </button>
+
+  `;
+
+
+  startUI.style.display =
+    "block";
+
+
+  /*
+   * 다시하기 버튼
+   */
+
+  const retryBtn =
+    document.getElementById(
+      "retryBtn"
+    );
+
+
+  retryBtn.addEventListener(
+    "click",
+    startGame
+  );
+
+}
+
+
+
+/* ==================================================
+   좌우 버튼 공통 처리
+================================================== */
+
+function setupHoldButton(
+  button,
+  direction
+) {
+
+  /*
+   * 버튼 누르기
+   */
+
+  button.addEventListener(
+    "pointerdown",
+    function(e) {
+
+      e.preventDefault();
+
+      if (direction === "left") {
+
+        holdLeft = true;
+
+      } else {
+
+        holdRight = true;
+
+      }
+
+    }
+  );
+
+
+  /*
+   * 손가락 떼기
+   */
+
+  button.addEventListener(
+    "pointerup",
+    function(e) {
+
+      e.preventDefault();
+
+      if (direction === "left") {
+
+        holdLeft = false;
+
+      } else {
+
+        holdRight = false;
+
+      }
+
+    }
+  );
+
+
+  /*
+   * 터치 취소
+   */
+
+  button.addEventListener(
+    "pointercancel",
+    function() {
+
+      if (direction === "left") {
+
+        holdLeft = false;
+
+      } else {
+
+        holdRight = false;
+
+      }
+
+    }
+  );
+
+
+  /*
+   * 화면 밖으로 손가락이 나간 경우
+   */
+
+  button.addEventListener(
+    "pointerleave",
+    function() {
+
+      if (direction === "left") {
+
+        holdLeft = false;
+
+      } else {
+
+        holdRight = false;
+
+      }
+
+    }
+  );
+
+}
+
+
+/*
+ * 좌우 버튼 연결
+ */
+
+setupHoldButton(
+  btnLeft,
+  "left"
 );
 
-btnLeft.addEventListener(
-  "pointerup",
-  () => {
-
-    holdLeft = false;
-
-  }
-);
-
-btnLeft.addEventListener(
-  "pointercancel",
-  () => {
-
-    holdLeft = false;
-
-  }
-);
-
-btnLeft.addEventListener(
-  "pointerleave",
-  () => {
-
-    holdLeft = false;
-
-  }
+setupHoldButton(
+  btnRight,
+  "right"
 );
 
 
-// ==================================================
-// 오른쪽 버튼
-// ==================================================
 
-btnRight.addEventListener(
-  "pointerdown",
-  () => {
-
-    holdRight = true;
-
-  }
-);
-
-btnRight.addEventListener(
-  "pointerup",
-  () => {
-
-    holdRight = false;
-
-  }
-);
-
-btnRight.addEventListener(
-  "pointercancel",
-  () => {
-
-    holdRight = false;
-
-  }
-);
-
-btnRight.addEventListener(
-  "pointerleave",
-  () => {
-
-    holdRight = false;
-
-  }
-);
-
-
-// ==================================================
-// PC 키보드
-// ==================================================
+/* ==================================================
+   PC 키보드
+================================================== */
 
 document.addEventListener(
   "keydown",
-  e => {
+  function(e) {
 
-    if (e.key === "ArrowLeft") {
+    if (
+      e.key === "ArrowLeft"
+    ) {
+
+      e.preventDefault();
 
       holdLeft = true;
+
     }
 
-    if (e.key === "ArrowRight") {
+
+    if (
+      e.key === "ArrowRight"
+    ) {
+
+      e.preventDefault();
 
       holdRight = true;
+
     }
 
   }
@@ -775,75 +1408,55 @@ document.addEventListener(
 
 document.addEventListener(
   "keyup",
-  e => {
+  function(e) {
 
-    if (e.key === "ArrowLeft") {
+    if (
+      e.key === "ArrowLeft"
+    ) {
 
       holdLeft = false;
+
     }
 
-    if (e.key === "ArrowRight") {
+
+    if (
+      e.key === "ArrowRight"
+    ) {
 
       holdRight = false;
+
     }
 
   }
 );
 
-// =========================
-// 게임 종료
-// =========================
 
-function endGame() {
+/*
+ * 창에서 포커스를 잃었을 때
+ * 키가 계속 눌린 것으로 남는 것 방지
+ */
 
-  running = false;
+window.addEventListener(
+  "blur",
+  function() {
 
-  btnLeft.style.display = "none";
-  btnRight.style.display = "none";
+    holdLeft = false;
+    holdRight = false;
 
-  startUI.innerHTML = `
-    <div style="
-      font-size:30px;
-      font-weight:bold;
-      margin-bottom:15px;
-      color:#4A5AA8;
-    ">
-      사랑받기 완료! 💗
-    </div>
-
-    <div style="
-      font-size:20px;
-      margin-bottom:18px;
-    ">
-      점수: ${score}점
-    </div>
-
-    <button
-      id="retry"
-      style="
-        background:white;
-        border:1px solid #ddd;
-        padding:14px 22px;
-        border-radius:12px;
-        font-size:18px;
-      "
-    >
-      다시하기
-    </button>
-  `;
-
-  startUI.style.display = "block";
-
-  document.getElementById("retry").onclick =
-    startGame;
-}
+  }
+);
 
 
-// ==================================================
-// 사랑받기 버튼
-// ==================================================
 
-loveBtn.onclick = startGame;
+/* ==================================================
+   사랑받기 버튼
+================================================== */
+
+loveBtn.addEventListener(
+  "click",
+  startGame
+);
+
 
 </script>
 
