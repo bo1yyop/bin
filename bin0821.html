@@ -568,12 +568,11 @@ const heartSpawnInterval = 700;
 ================================================== */
 
 const character = {
-
   x: 0,
-
   y: 0,
 
-  size: 100,
+  width: 100,
+  height: 100,
 
   speed: 6
 
@@ -646,7 +645,7 @@ function resize() {
 
   character.y =
     H -
-    character.size -
+    character.height -
     30;
 
 
@@ -658,7 +657,7 @@ function resize() {
     Math.max(
       0,
       Math.min(
-        W - character.size,
+        W - character.height,
         character.x
       )
     );
@@ -756,12 +755,12 @@ function startGame() {
 
   character.x =
     W / 2 -
-    character.size / 2;
+    character.width / 2;
 
 
   character.y =
     H -
-    character.size -
+    character.height -
     30;
 
 
@@ -1026,7 +1025,7 @@ function gameLoop(time) {
     Math.max(
       0,
       Math.min(
-        W - character.size,
+        W - character.width,
         character.x
       )
     );
@@ -1117,28 +1116,21 @@ function gameLoop(time) {
      하트 그리기
   ================================================== */
 
-  if (
-    imageReady(heartImg)
-  ) {
+ if (imageReady(heartImg)) {
 
-    for (
-      const heart of hearts
-    ) {
+  for (const heart of hearts) {
 
-      const character = {
-      x: 0,
-      y: 0,
-
-      width: 100,
-      height: 100,
-
-      speed: 6
-      };
-
-    }
+    ctx.drawImage(
+      heartImg,
+      heart.x,
+      heart.y,
+      heart.size,
+      heart.size
+    );
 
   }
 
+}
 
 
   /* ==================================================
@@ -1156,8 +1148,8 @@ function gameLoop(time) {
       character.x,
       character.y,
 
-      character.size,
-      character.size
+      character.Width,
+      character.Height
 
     );
 
