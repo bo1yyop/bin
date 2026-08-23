@@ -16,7 +16,6 @@
   --bg: #D1DEF4;
   --frame: #4A5AA8;
   --pink: #FF8FA8;
-  --pink-dark: #FF6F91;
 }
 
 * {
@@ -82,9 +81,9 @@ canvas {
 }
 
 
-/* ==================================================
+/* =========================
    점수
-================================================== */
+========================= */
 
 #scoreBox {
   position: absolute;
@@ -110,9 +109,9 @@ canvas {
 }
 
 
-/* ==================================================
+/* =========================
    타이머
-================================================== */
+========================= */
 
 #timerBox {
   position: absolute;
@@ -125,9 +124,6 @@ canvas {
 
   z-index: 5;
 }
-
-
-/* 타이머 바깥 */
 
 #timerTrack {
   position: absolute;
@@ -150,9 +146,6 @@ canvas {
   overflow: hidden;
 }
 
-
-/* 실제로 줄어드는 게이지 */
-
 #timerFill {
   position: absolute;
 
@@ -170,13 +163,7 @@ canvas {
     );
 
   border-radius: 14px;
-
-  transition:
-    height .08s linear;
 }
-
-
-/* 타이머 숫자 */
 
 #timerText {
   position: absolute;
@@ -198,9 +185,9 @@ canvas {
 }
 
 
-/* ==================================================
-   시작 / 종료 화면
-================================================== */
+/* =========================
+   시작 / 종료
+========================= */
 
 #startUI {
   position: absolute;
@@ -218,9 +205,6 @@ canvas {
   width: max-content;
   max-width: 90%;
 }
-
-
-/* 시작 버튼 */
 
 #loveBtn,
 #retryBtn {
@@ -242,22 +226,12 @@ canvas {
   color: #4A5AA8;
 
   cursor: pointer;
-
-  transition:
-    transform .1s ease,
-    box-shadow .1s ease;
 }
 
 #loveBtn:active,
 #retryBtn:active {
   transform: scale(.95);
-
-  box-shadow:
-    0 4px 10px rgba(0,0,0,.12);
 }
-
-
-/* 종료 화면 */
 
 #gameOverTitle {
   font-size: 30px;
@@ -278,9 +252,46 @@ canvas {
 }
 
 
-/* ==================================================
+/* =========================
+   이미지 오류 표시
+========================= */
+
+#imageError {
+  display: none;
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: 80%;
+
+  padding: 18px;
+
+  background: #fff0f3;
+
+  border: 2px solid #ff6f91;
+
+  border-radius: 14px;
+
+  color: #d6335c;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  text-align: center;
+
+  z-index: 50;
+}
+
+
+/* =========================
    좌우 버튼
-================================================== */
+========================= */
 
 .ctrl-btn {
   position: fixed;
@@ -325,8 +336,6 @@ canvas {
 }
 
 
-/* PC */
-
 @media (min-width: 700px) {
 
   .ctrl-btn {
@@ -342,10 +351,9 @@ canvas {
   #btnRight {
     right: 20px;
   }
+
 }
 
-
-/* 작은 모바일 화면 */
 
 @media (max-height: 600px) {
 
@@ -376,19 +384,11 @@ canvas {
     <canvas id="cv"></canvas>
 
 
-    <!-- =========================
-         점수
-    ========================== -->
-
     <div id="scoreBox">
       ❤️ 점수:
       <span id="score">0</span>
     </div>
 
-
-    <!-- =========================
-         타이머
-    ========================== -->
 
     <div id="timerBox">
 
@@ -397,17 +397,11 @@ canvas {
       </div>
 
       <div id="timerTrack">
-
         <div id="timerFill"></div>
-
       </div>
 
     </div>
 
-
-    <!-- =========================
-         시작 / 종료 UI
-    ========================== -->
 
     <div id="startUI">
 
@@ -417,14 +411,13 @@ canvas {
 
     </div>
 
+
+    <div id="imageError"></div>
+
   </div>
 
 </div>
 
-
-<!-- =========================
-     좌우 버튼
-========================== -->
 
 <div id="btnLeft" class="ctrl-btn">
   ◀
@@ -448,38 +441,32 @@ const cv =
 const ctx =
   cv.getContext("2d");
 
-
 const gameBox =
   document.getElementById("gameBox");
-
 
 const startUI =
   document.getElementById("startUI");
 
-
 const loveBtn =
   document.getElementById("loveBtn");
-
 
 const btnLeft =
   document.getElementById("btnLeft");
 
-
 const btnRight =
   document.getElementById("btnRight");
-
 
 const scoreEl =
   document.getElementById("score");
 
-
 const timerFill =
   document.getElementById("timerFill");
-
 
 const timerText =
   document.getElementById("timerText");
 
+const imageError =
+  document.getElementById("imageError");
 
 
 /* ==================================================
@@ -493,46 +480,118 @@ const heartImg =
   new Image();
 
 
-characterImg.src = "./images/character.png";
-
-heartImg.src = "./images/heart.png";
-
+let characterLoaded = false;
+let heartLoaded = false;
 
 
-/* 이미지 로딩 오류 확인 */
+/*
+ * 이미지 주소
+ */
 
-characterImg.onerror = function () {
+characterImg.src =
+  "./images/character.png";
 
-  console.error(
-    "❌ 캐릭터 이미지 로딩 실패:",
-    characterImg.src
-  );
-
-};
-
-
-heartImg.onerror = function () {
-
-  console.error(
-    "❌ 하트 이미지 로딩 실패:",
-    heartImg.src
-  );
-
-};
+heartImg.src =
+  "./images/heart.png";
 
 
+/*
+ * 캐릭터 로딩 성공
+ */
 
-/* 이미지가 실제로 로딩됐는지 확인 */
+characterImg.onload =
+  function() {
 
-function imageReady(img) {
+    characterLoaded = true;
 
-  return (
-    img.complete &&
-    img.naturalWidth > 0
-  );
+    console.log(
+      "✅ character.png 로딩 성공",
+      characterImg.naturalWidth,
+      characterImg.naturalHeight
+    );
+
+  };
+
+
+/*
+ * 캐릭터 로딩 실패
+ */
+
+characterImg.onerror =
+  function() {
+
+    characterLoaded = false;
+
+    console.error(
+      "❌ character.png 로딩 실패"
+    );
+
+    showImageError();
+
+  };
+
+
+/*
+ * 하트 로딩 성공
+ */
+
+heartImg.onload =
+  function() {
+
+    heartLoaded = true;
+
+    console.log(
+      "✅ heart.png 로딩 성공",
+      heartImg.naturalWidth,
+      heartImg.naturalHeight
+    );
+
+  };
+
+
+/*
+ * 하트 로딩 실패
+ */
+
+heartImg.onerror =
+  function() {
+
+    heartLoaded = false;
+
+    console.error(
+      "❌ heart.png 로딩 실패"
+    );
+
+    showImageError();
+
+  };
+
+
+/*
+ * 이미지 오류 화면
+ */
+
+function showImageError() {
+
+  imageError.innerHTML = `
+    <strong>이미지를 불러오지 못했어요 😭</strong>
+    <br><br>
+    아래 파일이 있는지 확인해주세요.
+    <br><br>
+    <code>images/character.png</code>
+    <br>
+    <code>images/heart.png</code>
+    <br><br>
+    <small>
+      bin0821.html과 images 폴더가
+      같은 위치에 있어야 합니다.
+    </small>
+  `;
+
+  imageError.style.display =
+    "block";
 
 }
-
 
 
 /* ==================================================
@@ -550,15 +609,14 @@ let gameStartTime = 0;
 
 let animationId = null;
 
+let lastHeartSpawn = 0;
+
 
 /* ==================================================
    게임 설정
 ================================================== */
 
 const GAME_TIME = 20;
-
-
-/* 하트 생성 간격 */
 
 const heartSpawnInterval = 700;
 
@@ -568,16 +626,18 @@ const heartSpawnInterval = 700;
 ================================================== */
 
 const character = {
+
   x: 0,
+
   y: 0,
 
   width: 100,
+
   height: 100,
 
   speed: 6
 
 };
-
 
 
 /* ==================================================
@@ -587,15 +647,12 @@ const character = {
 let hearts = [];
 
 
-
 /* ==================================================
-   키 상태
+   이동 상태
 ================================================== */
 
 let holdLeft = false;
-
 let holdRight = false;
-
 
 
 /* ==================================================
@@ -639,25 +696,17 @@ function resize() {
   );
 
 
-  /*
-   * 캐릭터를 바닥 쪽에 배치
-   */
-
   character.y =
     H -
     character.height -
     30;
 
 
-  /*
-   * 화면 밖으로 나가지 않게
-   */
-
   character.x =
     Math.max(
       0,
       Math.min(
-        W - character.height,
+        W - character.width,
         character.x
       )
     );
@@ -665,12 +714,8 @@ function resize() {
 }
 
 
-/* 최초 실행 */
-
 resize();
 
-
-/* 화면 크기 변경 */
 
 if (window.ResizeObserver) {
 
@@ -687,7 +732,6 @@ if (window.ResizeObserver) {
 }
 
 
-
 /* ==================================================
    게임 시작
 ================================================== */
@@ -695,11 +739,24 @@ if (window.ResizeObserver) {
 function startGame() {
 
   /*
-   * 이전 게임의 animationFrame이
-   * 혹시 남아있다면 취소
+   * 이미지가 준비되지 않았으면 시작하지 않음
    */
 
-  if (animationId !== null) {
+  if (
+    !characterLoaded ||
+    !heartLoaded
+  ) {
+
+    showImageError();
+
+    return;
+
+  }
+
+
+  if (
+    animationId !== null
+  ) {
 
     cancelAnimationFrame(
       animationId
@@ -719,10 +776,6 @@ function startGame() {
     "0";
 
 
-  /*
-   * 타이머 초기화
-   */
-
   timerFill.style.height =
     "100%";
 
@@ -730,17 +783,9 @@ function startGame() {
     "20초";
 
 
-  /*
-   * 시작 UI 숨기기
-   */
-
   startUI.style.display =
     "none";
 
-
-  /*
-   * 좌우 버튼 표시
-   */
 
   btnLeft.style.display =
     "flex";
@@ -748,10 +793,6 @@ function startGame() {
   btnRight.style.display =
     "flex";
 
-
-  /*
-   * 캐릭터 중앙 배치
-   */
 
   character.x =
     W / 2 -
@@ -764,33 +805,17 @@ function startGame() {
     30;
 
 
-  /*
-   * 버튼 상태 초기화
-   */
-
   holdLeft = false;
   holdRight = false;
 
-
-  /*
-   * 시작 시간
-   */
 
   gameStartTime =
     performance.now();
 
 
-  /*
-   * 첫 하트가 너무 늦게 나오지 않게
-   */
-
   lastHeartSpawn =
     performance.now();
 
-
-  /*
-   * 게임 시작
-   */
 
   animationId =
     requestAnimationFrame(
@@ -800,7 +825,6 @@ function startGame() {
 }
 
 
-
 /* ==================================================
    하트 생성
 ================================================== */
@@ -808,11 +832,6 @@ function startGame() {
 function spawnHeart() {
 
   const size = 42;
-
-
-  /*
-   * 화면 폭보다 하트가 커지는 경우 방지
-   */
 
   const maxX =
     Math.max(
@@ -842,20 +861,20 @@ function spawnHeart() {
 }
 
 
-
 /* ==================================================
-   충돌 검사
+   충돌
 ================================================== */
 
 function isColliding(a, b) {
 
   return !(
-    a.x + a.size < b.x ||
+    a.x + a.width <
+      b.x ||
 
     a.x >
       b.x + b.size ||
 
-    a.y + a.size <
+    a.y + a.height <
       b.y ||
 
     a.y >
@@ -865,19 +884,11 @@ function isColliding(a, b) {
 }
 
 
-
 /* ==================================================
    게임 루프
 ================================================== */
 
-let lastHeartSpawn = 0;
-
-
 function gameLoop(time) {
-
-  /*
-   * 게임이 끝났다면 종료
-   */
 
   if (!running) {
 
@@ -886,13 +897,16 @@ function gameLoop(time) {
   }
 
 
-  /* ==================================================
+  /* =========================
      타이머
-  ================================================== */
+  ========================== */
 
   const elapsed =
-    (time - gameStartTime) /
-    1000;
+    Math.max(
+      0,
+      (time - gameStartTime) /
+      1000
+    );
 
 
   const remaining =
@@ -902,13 +916,6 @@ function gameLoop(time) {
     );
 
 
-  /*
-   * 0 ~ 1
-   *
-   * 0 = 시작
-   * 1 = 20초 종료
-   */
-
   const percent =
     Math.min(
       1,
@@ -916,40 +923,28 @@ function gameLoop(time) {
     );
 
 
-  /*
-   * 타이머 게이지 감소
-   *
-   * 시작: 100%
-   * 종료: 0%
-   */
-
   timerFill.style.height =
-    (
-      (1 - percent) * 100
-    ) + "%";
+    ((1 - percent) * 100) +
+    "%";
 
 
-  /*
-   * 숫자는 자연스럽게
-   *
-   * 20
-   * 19
-   * 18
-   * ...
-   * 1
-   * 0
-   */
+  const seconds =
+    Math.min(
+      GAME_TIME,
+      Math.max(
+        0,
+        Math.ceil(remaining)
+      )
+    );
+
 
   timerText.textContent =
-    Math.ceil(remaining) +
-    "초";
+    seconds + "초";
 
 
-  /*
-   * 20초 종료
-   */
-
-  if (remaining <= 0) {
+  if (
+    remaining <= 0
+  ) {
 
     timerFill.style.height =
       "0%";
@@ -964,10 +959,9 @@ function gameLoop(time) {
   }
 
 
-
-  /* ==================================================
-     캔버스 지우기
-  ================================================== */
+  /* =========================
+     화면 지우기
+  ========================== */
 
   ctx.clearRect(
     0,
@@ -977,10 +971,9 @@ function gameLoop(time) {
   );
 
 
-
-  /* ==================================================
+  /* =========================
      하트 생성
-  ================================================== */
+  ========================== */
 
   if (
     time -
@@ -996,10 +989,9 @@ function gameLoop(time) {
   }
 
 
-
-  /* ==================================================
+  /* =========================
      캐릭터 이동
-  ================================================== */
+  ========================== */
 
   if (holdLeft) {
 
@@ -1017,10 +1009,6 @@ function gameLoop(time) {
   }
 
 
-  /*
-   * 화면 밖으로 못 나가게
-   */
-
   character.x =
     Math.max(
       0,
@@ -1031,10 +1019,9 @@ function gameLoop(time) {
     );
 
 
-
-  /* ==================================================
+  /* =========================
      하트 이동 + 충돌
-  ================================================== */
+  ========================== */
 
   for (
     let i = hearts.length - 1;
@@ -1046,18 +1033,9 @@ function gameLoop(time) {
       hearts[i];
 
 
-    /*
-     * 하트를 아래로 이동
-     */
-
     heart.y +=
       heart.speed;
 
-
-
-    /*
-     * 캐릭터와 충돌
-     */
 
     if (
       isColliding(
@@ -1066,19 +1044,11 @@ function gameLoop(time) {
       )
     ) {
 
-      /*
-       * 하트 삭제
-       */
-
       hearts.splice(
         i,
         1
       );
 
-
-      /*
-       * 점수 +1
-       */
 
       score++;
 
@@ -1090,11 +1060,6 @@ function gameLoop(time) {
 
     }
 
-
-
-    /*
-     * 화면 아래로 나간 하트 삭제
-     */
 
     if (
       heart.y >
@@ -1111,55 +1076,49 @@ function gameLoop(time) {
   }
 
 
-
-  /* ==================================================
+  /* =========================
      하트 그리기
-  ================================================== */
+  ========================== */
 
- if (imageReady(heartImg)) {
-
-  for (const heart of hearts) {
-
-    ctx.drawImage(
-      heartImg,
-      heart.x,
-      heart.y,
-      heart.size,
-      heart.size
-    );
-
-  }
-
-}
-
-
-  /* ==================================================
-     캐릭터 그리기
-  ================================================== */
-
-  if (
-    imageReady(characterImg)
+  for (
+    const heart of hearts
   ) {
 
     ctx.drawImage(
 
-      characterImg,
+      heartImg,
 
-      character.x,
-      character.y,
+      heart.x,
+      heart.y,
 
-      character.Width,
-      character.Height
+      heart.size,
+      heart.size
 
     );
 
   }
 
 
+  /* =========================
+     캐릭터 그리기
+  ========================== */
 
-  /* ==================================================
+  ctx.drawImage(
+
+    characterImg,
+
+    character.x,
+    character.y,
+
+    character.width,
+    character.height
+
+  );
+
+
+  /* =========================
      다음 프레임
-  ================================================== */
+  ========================== */
 
   animationId =
     requestAnimationFrame(
@@ -1167,7 +1126,6 @@ function gameLoop(time) {
     );
 
 }
-
 
 
 /* ==================================================
@@ -1179,10 +1137,6 @@ function endGame() {
   running = false;
 
 
-  /*
-   * 좌우 버튼 숨기기
-   */
-
   btnLeft.style.display =
     "none";
 
@@ -1190,17 +1144,9 @@ function endGame() {
     "none";
 
 
-  /*
-   * 키 상태 초기화
-   */
-
   holdLeft = false;
   holdRight = false;
 
-
-  /*
-   * 종료 화면
-   */
 
   startUI.innerHTML = `
 
@@ -1223,27 +1169,18 @@ function endGame() {
     "block";
 
 
-  /*
-   * 다시하기 버튼
-   */
-
-  const retryBtn =
-    document.getElementById(
-      "retryBtn"
+  document
+    .getElementById("retryBtn")
+    .addEventListener(
+      "click",
+      startGame
     );
-
-
-  retryBtn.addEventListener(
-    "click",
-    startGame
-  );
 
 }
 
 
-
 /* ==================================================
-   좌우 버튼 공통 처리
+   좌우 버튼
 ================================================== */
 
 function setupHoldButton(
@@ -1251,17 +1188,15 @@ function setupHoldButton(
   direction
 ) {
 
-  /*
-   * 버튼 누르기
-   */
-
   button.addEventListener(
     "pointerdown",
     function(e) {
 
       e.preventDefault();
 
-      if (direction === "left") {
+      if (
+        direction === "left"
+      ) {
 
         holdLeft = true;
 
@@ -1275,17 +1210,15 @@ function setupHoldButton(
   );
 
 
-  /*
-   * 손가락 떼기
-   */
-
   button.addEventListener(
     "pointerup",
     function(e) {
 
       e.preventDefault();
 
-      if (direction === "left") {
+      if (
+        direction === "left"
+      ) {
 
         holdLeft = false;
 
@@ -1298,16 +1231,14 @@ function setupHoldButton(
     }
   );
 
-
-  /*
-   * 터치 취소
-   */
 
   button.addEventListener(
     "pointercancel",
     function() {
 
-      if (direction === "left") {
+      if (
+        direction === "left"
+      ) {
 
         holdLeft = false;
 
@@ -1321,15 +1252,13 @@ function setupHoldButton(
   );
 
 
-  /*
-   * 화면 밖으로 손가락이 나간 경우
-   */
-
   button.addEventListener(
     "pointerleave",
     function() {
 
-      if (direction === "left") {
+      if (
+        direction === "left"
+      ) {
 
         holdLeft = false;
 
@@ -1345,10 +1274,6 @@ function setupHoldButton(
 }
 
 
-/*
- * 좌우 버튼 연결
- */
-
 setupHoldButton(
   btnLeft,
   "left"
@@ -1360,9 +1285,8 @@ setupHoldButton(
 );
 
 
-
 /* ==================================================
-   PC 키보드
+   키보드
 ================================================== */
 
 document.addEventListener(
@@ -1419,11 +1343,6 @@ document.addEventListener(
 );
 
 
-/*
- * 창에서 포커스를 잃었을 때
- * 키가 계속 눌린 것으로 남는 것 방지
- */
-
 window.addEventListener(
   "blur",
   function() {
@@ -1435,16 +1354,14 @@ window.addEventListener(
 );
 
 
-
 /* ==================================================
-   사랑받기 버튼
+   시작 버튼
 ================================================== */
 
 loveBtn.addEventListener(
   "click",
   startGame
 );
-
 
 </script>
 
